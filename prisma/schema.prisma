@@ -1,0 +1,210 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider          = "postgresql"
+  url               = env("DATABASE_PRISMA_URL") // uses connection pooling
+  directUrl         = env("DATABASE_URL_NON_POOLING") // uses a direct connection
+  shadowDatabaseUrl = env("DATABASE_URL_NON_POOLING") // used for migrations
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model User {
+  id            String          @id @default(cuid())
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+  name          String?
+  email         String?         @unique
+  emailVerified DateTime?
+  image         String?
+  accounts      Account[]
+  invites       ProjectInvite[]
+  inviter       ProjectInvite[] @relation("inviter")
+  members       Member[]
+  sessions      Session[]
+  notifications Notification[]
+  taskLog       TaskLog[]
+  projectLog    ProjectLog[]
+  taskComment   TaskComment[]
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+model Notification {
+  id          String   @id @default(uuid())
+  createdAt   DateTime @default(now())
+  title       String
+  description String?
+  read        Boolean  @default(false)
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Tag {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  name      String
+  bgColor   String
+  textColor String
+  projectId String
+  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  tasks     Task[]
+}
+
+model Project {
+  id            String          @id @default(uuid())
+  inbox         String?         @unique
+  name          String
+  color         String?
+  display       ProjectDisplay  @default(LIST)
+  showCompleted Boolean         @default(false)
+  taskOrder     TaskOrder       @default(CUSTOM)
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+  invites       ProjectInvite[]
+  members       Member[]
+  sections      Section[]
+  tags          Tag[]
+  tasks         Task[]
+  projectLog    ProjectLog[]
+}
+
+enum TaskOrder {
+  CUSTOM
+  DUEDATE
+}
+
+model ProjectInvite {
+  id        String      @id @default(uuid())
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+  role      ProjectRole @default(VIEWER)
+  projectId String
+  userId    String
+  inviterId String
+  inviter   User        @relation("inviter", fields: [inviterId], references: [id])
+  project   Project     @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  user      User        @relation(fields: [userId], references: [id])
+
+  @@unique([projectId, userId])
+}
+
+model Section {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  name      String
+  order     Int
+  projectId String
+  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  tasks     Task[]
+}
+
+model Member {
+  id        String      @id @default(uuid())
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+  projectId String
+  userId    String
+  role      ProjectRole
+  project   Project     @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  user      User        @relation(fields: [userId], references: [id])
+
+  @@unique([userId, projectId])
+}
+
+model Task {
+  id          String        @id @default(uuid())
+  title       String
+  description String?
+  isCompleted Boolean       @default(false)
+  dueDate     DateTime?     @db.Date
+  order       Int?
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  projectId   String
+  sectionId   String?
+  project     Project       @relation(fields: [projectId], references: [id])
+  section     Section?      @relation(fields: [sectionId], references: [id])
+  tags        Tag[]
+  taskComment TaskComment[]
+  taskLog     TaskLog[]
+}
+
+model TaskComment {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  message   String
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  taskId    String
+  task      Task     @relation(fields: [taskId], references: [id])
+}
+
+model TaskLog {
+  id          String   @id @default(uuid())
+  createdAt   DateTime @default(now())
+  title       String
+  description String?
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
+  taskId      String
+  task        Task     @relation(fields: [taskId], references: [id])
+}
+
+model ProjectLog {
+  id          String   @id @default(uuid())
+  createdAt   DateTime @default(now())
+  title       String
+  description String?
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
+  projectId   String
+  project     Project  @relation(fields: [projectId], references: [id])
+}
+
+enum ProjectDisplay {
+  LIST
+  BOARD
+}
+
+enum ProjectRole {
+  OWNER
+  ADMIN
+  EDITOR
+  VIEWER
+}
