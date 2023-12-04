@@ -3,6 +3,7 @@ const description =
 	'The web app Todo List is a convenient and user-friendly tool designed to help you stay organized and manage your tasks effectively. With its intuitive interface, you can easily create, prioritize, and track your to-do items, ensuring that nothing falls through the cracks. '
 
 export const seo = {
+	metadataBase: new URL(process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000'),
 	title: {
 		template: `%s | ${applicationName}`,
 		default: applicationName,
@@ -28,7 +29,6 @@ export const seo = {
 		'Personal Task Manager',
 		'Project Management',
 	],
-	viewport: 'width=device-width, initial-scale=1.0',
 	robots: '',
 	icons: [],
 	manifest: '',
