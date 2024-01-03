@@ -4,6 +4,7 @@ import '@/styles/tailwind.css'
 
 import { Metadata, Viewport } from 'next'
 import { Analytics } from '@vercel/analytics/react'
+import { SpeedInsights } from '@vercel/speed-insights/next'
 
 import { seo } from '@/config/seo'
 import { cn } from '@/utils/misc'
@@ -12,8 +13,8 @@ import Providers from './providers'
 
 export const metadata: Metadata = seo
 export const viewport: Viewport = {
-	width: "device-width",
-	initialScale: 1
+	width: 'device-width',
+	initialScale: 1,
 }
 
 export default async function RootLayout({
@@ -28,6 +29,7 @@ export default async function RootLayout({
 			>
 				<Providers>{children}</Providers>
 				<Analytics />
+				<SpeedInsights />
 			</body>
 		</html>
 	)
