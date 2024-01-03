@@ -262,17 +262,15 @@ export async function createTask({
 		},
 	})
 
-	if (task.dueDate) {
-		if (isToday(task.dueDate)) {
-			projectMembers?.members.forEach(member => {
-				typedTrigger(`private-today-${member.userId}`, 'task:created', task)
-			})
-		}
-		if (isThisWeek(task.dueDate)) {
-			projectMembers?.members.forEach(member => {
-				typedTrigger(`private-thisWeek-${member.userId}`, 'task:created', task)
-			})
-		}
+	if (isToday(task.dueDate)) {
+		projectMembers?.members.forEach(member => {
+			typedTrigger(`private-today-${member.userId}`, 'task:created', task)
+		})
+	}
+	if (isThisWeek(task.dueDate)) {
+		projectMembers?.members.forEach(member => {
+			typedTrigger(`private-thisWeek-${member.userId}`, 'task:created', task)
+		})
 	}
 
 	return task
@@ -292,6 +290,15 @@ export async function updateTask({
 	await havePermissions({
 		projectId,
 		permission: 'EDITOR',
+	})
+
+	const prevTask = await prisma.task.findUnique({
+		where: {
+			id,
+		},
+		select: {
+			dueDate: true,
+		},
 	})
 
 	const task = await prisma.task.update({
@@ -334,17 +341,15 @@ export async function updateTask({
 		},
 	})
 
-	if (task.dueDate) {
-		if (isToday(task.dueDate)) {
-			projectMembers?.members.forEach(member => {
-				typedTrigger(`private-today-${member.userId}`, 'task:updated', task)
-			})
-		}
-		if (isThisWeek(task.dueDate)) {
-			projectMembers?.members.forEach(member => {
-				typedTrigger(`private-thisWeek-${member.userId}`, 'task:updated', task)
-			})
-		}
+	if (isToday(prevTask?.dueDate) || isToday(task.dueDate)) {
+		projectMembers?.members.forEach(member => {
+			typedTrigger(`private-today-${member.userId}`, 'task:updated', task)
+		})
+	}
+	if (isThisWeek(prevTask?.dueDate) || isThisWeek(task.dueDate)) {
+		projectMembers?.members.forEach(member => {
+			typedTrigger(`private-thisWeek-${member.userId}`, 'task:updated', task)
+		})
 	}
 
 	return task
@@ -400,25 +405,23 @@ export async function toggleCompleteTask(id: string) {
 		},
 	})
 
-	if (task.dueDate) {
-		if (isToday(task.dueDate)) {
-			projectMembers?.members.forEach(member => {
-				typedTrigger(
-					`private-today-${member.userId}`,
-					'task:updated',
-					updatedTask,
-				)
-			})
-		}
-		if (isThisWeek(task.dueDate)) {
-			projectMembers?.members.forEach(member => {
-				typedTrigger(
-					`private-thisWeek-${member.userId}`,
-					'task:updated',
-					updatedTask,
-				)
-			})
-		}
+	if (isToday(task.dueDate)) {
+		projectMembers?.members.forEach(member => {
+			typedTrigger(
+				`private-today-${member.userId}`,
+				'task:updated',
+				updatedTask,
+			)
+		})
+	}
+	if (isThisWeek(task.dueDate)) {
+		projectMembers?.members.forEach(member => {
+			typedTrigger(
+				`private-thisWeek-${member.userId}`,
+				'task:updated',
+				updatedTask,
+			)
+		})
 	}
 
 	return updateTask
@@ -465,17 +468,15 @@ export async function deleteTask(id: string) {
 		},
 	})
 
-	if (task.dueDate) {
-		if (isToday(task.dueDate)) {
-			projectMembers?.members.forEach(member => {
-				typedTrigger(`private-today-${member.userId}`, 'task:deleted', id)
-			})
-		}
-		if (isThisWeek(task.dueDate)) {
-			projectMembers?.members.forEach(member => {
-				typedTrigger(`private-thisWeek-${member.userId}`, 'task:deleted', id)
-			})
-		}
+	if (isToday(task.dueDate)) {
+		projectMembers?.members.forEach(member => {
+			typedTrigger(`private-today-${member.userId}`, 'task:deleted', id)
+		})
+	}
+	if (isThisWeek(task.dueDate)) {
+		projectMembers?.members.forEach(member => {
+			typedTrigger(`private-thisWeek-${member.userId}`, 'task:deleted', id)
+		})
 	}
 
 	return id

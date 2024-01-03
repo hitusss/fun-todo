@@ -68,13 +68,15 @@ export function thisWeekDate() {
 	return { startOfWeek, endOfWeek }
 }
 
-export function isToday(date: Date) {
+export function isToday(date: Date | undefined | null) {
+	if (!date) return false
 	const { startOfDay, endOfDay } = todayDate()
 	if (date >= startOfDay && date <= endOfDay) return true
 	return false
 }
 
-export function isThisWeek(date: Date) {
+export function isThisWeek(date: Date | undefined | null) {
+	if (!date) return false
 	const { startOfWeek, endOfWeek } = thisWeekDate()
 	if (date >= startOfWeek && date <= endOfWeek) return true
 	return false
