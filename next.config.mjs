@@ -1,7 +1,5 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-	/* need disable strick mode for dnd */
-	reactStrictMode: false,
 	experimental: {
 		serverComponentsExternalPackages: ['@prisma/client', '@trpc/server'],
 	},
