@@ -12,8 +12,8 @@
 	],
 	"homepage": "https://github.com/hitusss/fun-todo#readme",
 	"scripts": {
-		"dev": "next dev",
-		"dx:next": "next dev",
+		"dev": "next dev --turbo",
+		"dx:next": "next dev --turbo",
 		"dx:prisma-studio": "pnpm prisma studio",
 		"dx": "run-p dx:* --print-label",
 		"build": "next build",
