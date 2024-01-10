@@ -41,7 +41,7 @@ async function createProject(userId: string) {
 	const sections = await Promise.all(
 		Array.from(
 			{
-				length: faker.number.int({ min: 4, max: 12 }),
+				length: faker.number.int({ min: 3, max: 6 }),
 			},
 			async (_, i) =>
 				await prisma.section.create({
@@ -56,7 +56,7 @@ async function createProject(userId: string) {
 	const tags = await Promise.all(
 		Array.from(
 			{
-				length: faker.number.int({ min: 4, max: 8 }),
+				length: faker.number.int({ min: 3, max: 6 }),
 			},
 			async () =>
 				await prisma.tag.create({
@@ -72,7 +72,7 @@ async function createProject(userId: string) {
 
 	Array.from(
 		{
-			length: faker.number.int({ min: 16, max: 64 }),
+			length: faker.number.int({ min: 12, max: 32 }),
 		},
 		async (_, i) => {
 			await prisma.task.create({
@@ -123,7 +123,7 @@ async function createMembersAndInvites(
 			const members = Array.from(
 				new Set(
 					Array.from(
-						{ length: faker.number.int({ min: 2, max: 8 }) },
+						{ length: faker.number.int({ min: 1, max: 8 }) },
 						() =>
 							faker.helpers.arrayElement(
 								data.filter(d => d.user.id !== user.id),
@@ -141,7 +141,7 @@ async function createMembersAndInvites(
 			const invites = Array.from(
 				new Set(
 					Array.from(
-						{ length: faker.number.int({ min: 0, max: 8 }) },
+						{ length: faker.number.int({ min: 0, max: 4 }) },
 						() =>
 							faker.helpers.arrayElement(
 								data.filter(
@@ -191,7 +191,7 @@ async function seed() {
 	const mainUser = await createUser('me@funtodo.com')
 	const mainProjects = await Promise.all(
 		Array.from(
-			{ length: faker.number.int({ min: 2, max: 12 }) },
+			{ length: faker.number.int({ min: 2, max: 6 }) },
 			async () => await createProject(mainUser.id),
 		),
 	)
@@ -199,13 +199,13 @@ async function seed() {
 	const data = await Promise.all(
 		Array.from(
 			{
-				length: 64,
+				length: 16,
 			},
 			async (_, i) => {
 				const user = await createUser(`user${i}@funtodo.com`)
 				const projects = await Promise.all(
 					Array.from(
-						{ length: faker.number.int({ min: 2, max: 12 }) },
+						{ length: faker.number.int({ min: 2, max: 6 }) },
 						async () => await createProject(user.id),
 					),
 				)
