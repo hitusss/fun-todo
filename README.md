@@ -5,11 +5,10 @@
 > development. While these features bring exciting possibilities, it's important
 > to note that they may not work perfectly or as expected in all scenarios.
 
-Fun-Todo is a project based todo list web application. It allows you to organize
-tasks within different projects, sections and tags. You can customize how you
-organize your projects, view them as lists or boards, and choose how the tasks
-are ordered. Each project has its own activity log to keep track of events
-within the project. Each task also has its own activity log and comments system.
+A todo list application designed with project-centric organization in mind, 
+allowing users to efficiently manage tasks by grouping them into projects. 
+With the flexibility to categorize tasks using groups and tags, users can 
+further organize their tasks.
 
 ## Table of Contents
 
