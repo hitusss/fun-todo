@@ -11,6 +11,7 @@ import { routes } from '@/config/app'
 import { useProjectDialog } from '@/stores/project-dialog'
 import { useUserNotifications } from '@/stores/user-notifications'
 import { useUserProjects } from '@/stores/user-projects'
+import useLocalStorage from '@/utils/hooks/use-local-storage'
 import { cn } from '@/utils/misc'
 import { NotificationsPopover } from '@/components/app/notifications/popover'
 import { UserAvatar } from '@/components/app/user-avatar'
@@ -106,7 +107,7 @@ export function SideBar() {
 	const { open: openProjectDialog } = useProjectDialog()
 	const { notificationCount } = useUserNotifications()
 
-	const [open, setOpen] = React.useState(true)
+	const [open, setOpen] = useLocalStorage('sidebar-open', true)
 
 	return (
 		<motion.aside
@@ -127,7 +128,7 @@ export function SideBar() {
 		>
 			<button
 				className="absolute right-2 top-2 z-50 flex h-8 w-8 flex-col justify-around p-1 text-primary"
-				onClick={() => setOpen(prev => !prev)}
+				onClick={() => setOpen(!open)}
 			>
 				<motion.span
 					variants={{
